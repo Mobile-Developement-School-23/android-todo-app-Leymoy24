@@ -12,6 +12,7 @@ import com.example.todoapp.R
 import com.example.todoapp.TasksRepository
 import com.example.todoapp.adapters.ToDoAdapter
 import com.example.todoapp.databinding.FragmentToDoBinding
+import com.google.android.material.appbar.CollapsingToolbarLayout
 
 
 class ToDoFragment : Fragment() {
@@ -34,6 +35,10 @@ class ToDoFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.floatingActionButtonAddTask.setColorFilter(Color.argb(255, 255, 255, 255));
+
+        val mCollapsingToolbarLayout: CollapsingToolbarLayout = binding.collapsingToolbar
+        mCollapsingToolbarLayout.setExpandedTitleTextAppearance(R.style.ExpandedAppBar)
+        mCollapsingToolbarLayout.setCollapsedTitleTextAppearance(R.style.CollapsedAppBar)
 
         val toDoAdapter = ToDoAdapter()
         val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
