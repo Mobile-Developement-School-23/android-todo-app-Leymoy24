@@ -1,15 +1,14 @@
-package com.example.todoapp.adapters
+package com.example.todoapp.ui.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todoapp.R
-import com.example.todoapp.TaskInfo
-import com.example.todoapp.ToDoViewHolder
+import com.example.todoapp.data.models.TodoItem
 
-class ToDoAdapter: RecyclerView.Adapter<ToDoViewHolder>() {
+class ToDoAdapter : RecyclerView.Adapter<ToDoViewHolder>() {
 
-    var tasks = listOf<TaskInfo>()
+    private var tasks: List<TodoItem> = listOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ToDoViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -26,5 +25,10 @@ class ToDoAdapter: RecyclerView.Adapter<ToDoViewHolder>() {
 
     override fun onBindViewHolder(holder: ToDoViewHolder, position: Int) {
         holder.onBind(tasks[position])
+    }
+
+    fun setTasks(tasks: List<TodoItem>) {
+        this.tasks = tasks
+        notifyDataSetChanged()
     }
 }

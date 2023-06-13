@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/fragmentToDo"
-        android:name="com.example.todoapp.fragments.ToDoFragment"
+        android:name="com.example.todoapp.ui.fragments.ToDoFragment"
         android:label="fragment_to_do"
         tools:layout="@layout/fragment_to_do">
         <action
@@ -16,9 +16,9 @@
     </fragment>
     <fragment
         android:id="@+id/taskFragment"
-        android:name="com.example.todoapp.fragments.TaskFragment"
+        android:name="com.example.todoapp.ui.fragments.TaskFragment"
         android:label="fragment_task"
-        tools:layout="@layout/fragment_task" >
+        tools:layout="@layout/fragment_task">
         <action
             android:id="@+id/action_taskFragment_to_fragmentToDo"
             app:destination="@id/fragmentToDo" />

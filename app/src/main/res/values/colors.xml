@@ -9,4 +9,11 @@
     <color name="white">#FFFFFFFF</color>
     <color name="Primary">#F7F6F2</color>
     <color name="Blue">#007AFF</color>
+    <color name="Disable">#26000000</color>
+    <color name="Tertiary">#4D000000</color>
+    <color name="Secondary">#99000000</color>
+    <color name="Separator">#33000000</color>
+    <color name="lightGrey">#808080</color>
+    <color name="lightBlue">#7FC7FF</color>
+
 </resources>
