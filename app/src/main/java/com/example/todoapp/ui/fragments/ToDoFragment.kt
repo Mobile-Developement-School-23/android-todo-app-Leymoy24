@@ -7,15 +7,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todoapp.R
-import com.example.todoapp.data.repositories.TodoItemRepository
 import com.example.todoapp.ui.adapters.ToDoAdapter
 import com.example.todoapp.databinding.FragmentToDoBinding
 import com.example.todoapp.ui.viewmodels.TodoViewModel
 import com.google.android.material.appbar.CollapsingToolbarLayout
+import com.example.todoapp.data.models.TodoItem
 
 
 class ToDoFragment : Fragment() {
@@ -46,13 +46,6 @@ class ToDoFragment : Fragment() {
         mCollapsingToolbarLayout.setExpandedTitleTextAppearance(R.style.ExpandedAppBar)
         mCollapsingToolbarLayout.setCollapsedTitleTextAppearance(R.style.CollapsedAppBar)
 
-//        val toDoAdapter = ToDoAdapter()
-//        val layoutManager =
-//            LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-//        binding.recyclerViewTasks.adapter = toDoAdapter
-//        binding.recyclerViewTasks.layoutManager = layoutManager
-//        toDoAdapter.tasks = todoItemRepository.getTasks(requireContext())
-
         recyclerView = binding.recyclerViewTasks
         layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         adapter = ToDoAdapter()
@@ -64,9 +57,20 @@ class ToDoFragment : Fragment() {
             adapter.setTasks(tasks)
         }
 
+        adapter.setOnItemClickListener(object : ToDoAdapter.OnItemClickListener {
+            override fun onItemClick(todoItem: TodoItem) {
+                navigateToTaskFragment(todoItem)
+            }
+        })
+
         binding.floatingActionButtonAddTask.setOnClickListener {
-            Navigation.findNavController(view).navigate(R.id.action_fragmentToDo_to_taskFragment)
+            findNavController().navigate(R.id.action_fragmentToDo_to_taskFragment)
         }
+    }
+
+    private fun navigateToTaskFragment(todoItem: TodoItem) {
+        val action = ToDoFragmentDirections.actionFragmentToDoToTaskFragment(todoItem.taskId)
+        findNavController().navigate(action)
     }
 
     override fun onDestroyView() {

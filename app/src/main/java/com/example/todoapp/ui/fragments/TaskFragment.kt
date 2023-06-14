@@ -3,16 +3,11 @@ package com.example.todoapp.ui.fragments
 import android.app.DatePickerDialog
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
-import android.view.View.OnTouchListener
 import android.view.ViewGroup
-import android.widget.CompoundButton
-import android.widget.EditText
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import com.example.todoapp.R
 import com.example.todoapp.databinding.FragmentTaskBinding
 import com.example.todoapp.ui.viewmodels.TodoViewModel
@@ -38,16 +33,33 @@ class TaskFragment : Fragment() {
 
         val taskViewModel = ViewModelProvider(requireActivity()).get(TodoViewModel::class.java)
 
+        val taskId = TaskFragmentArgs.fromBundle(requireArguments()).taskId
+
+        if (taskId.isNotEmpty()) {
+            // Получение элемента по идентификатору taskId из ViewModel
+            val todoItemText = taskViewModel.getTaskById(taskId)
+
+            // Проверка на null перед использованием элемента
+            todoItemText?.let {
+                binding.editTextEnterTask.setText(todoItemText)
+            }
+        }
+
         binding.textViewDownload.setOnClickListener {
             val taskText = binding.editTextEnterTask.text.toString().trim()
 
             if (taskText.isNotEmpty()) {
-                taskViewModel.addTask(taskText)
+                if (taskId.isNotEmpty() && taskId != "defaultTaskId") {
+                    taskViewModel.updateTask(taskId, taskText)
+                } else {
+                    taskViewModel.addTask(taskText)
+                }
                 binding.editTextEnterTask.text.clear()
             }
-            Navigation.findNavController(view).navigate(R.id.action_taskFragment_to_fragmentToDo)
+            findNavController().navigate(R.id.action_taskFragment_to_fragmentToDo)
         }
 
+        // datePicker не доработан!!!
         binding.switchCompat.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 val datePickerDialog = DatePickerDialog(
@@ -65,7 +77,7 @@ class TaskFragment : Fragment() {
 
                 datePickerDialog.show()
             } else {
-                println("Standard Switch is off")
+                // ...
             }
         }
 

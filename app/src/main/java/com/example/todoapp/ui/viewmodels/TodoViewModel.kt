@@ -10,8 +10,9 @@ import com.example.todoapp.data.sources.TodoItemSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.UUID
 
-class TodoViewModel : ViewModel() {
+class TodoViewModel() : ViewModel() {
     private val taskRepository: TodoItemRepository
     private val _taskList: MutableLiveData<List<TodoItem>> = MutableLiveData()
     val taskList: LiveData<List<TodoItem>> = _taskList
@@ -21,13 +22,37 @@ class TodoViewModel : ViewModel() {
         taskRepository = TodoItemRepository(dataSource)
     }
 
+    // Генерация уникального идентификатора
+    private fun generateTaskId(): String {
+        return UUID.randomUUID().toString()
+    }
+
     fun addTask(taskText: String) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                taskRepository.addTask(taskText)
+                val taskId = generateTaskId()
+                taskRepository.addTask(taskText, taskId)
                 val updatedTasks = taskRepository.getTasks()
                 _taskList.postValue(updatedTasks)
             }
         }
+    }
+
+    fun updateTask(taskId: String, newTaskText: String) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                taskRepository.updateTask(taskId, newTaskText)
+                val updatedTasks = taskRepository.getTasks()
+                _taskList.postValue(updatedTasks)
+            }
+        }
+    }
+
+    fun getTaskById(taskId: String): String? {
+        return taskRepository.getTaskById(taskId)
+    }
+
+    fun getTasks(): List<TodoItem> {
+        return taskRepository.getTasks()
     }
 }
