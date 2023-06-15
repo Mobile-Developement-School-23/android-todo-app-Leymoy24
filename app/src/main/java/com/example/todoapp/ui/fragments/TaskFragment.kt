@@ -2,9 +2,14 @@ package com.example.todoapp.ui.fragments
 
 import android.app.DatePickerDialog
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -59,6 +64,18 @@ class TaskFragment : Fragment() {
             findNavController().navigate(R.id.action_taskFragment_to_fragmentToDo)
         }
 
+        binding.imageButtonClose.setOnClickListener{
+            findNavController().navigate(R.id.action_taskFragment_to_fragmentToDo)
+        }
+
+        binding.DeleteTextView.setOnClickListener {
+            val taskText = binding.editTextEnterTask.text.toString().trim()
+            if (taskText.isNotEmpty() && taskId != "defaultTaskId" && taskId.isNotEmpty()) {
+                taskViewModel.deleteTask(taskId)
+            }
+            findNavController().navigate(R.id.action_taskFragment_to_fragmentToDo)
+        }
+
         // datePicker не доработан!!!
         binding.switchCompat.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
@@ -81,6 +98,30 @@ class TaskFragment : Fragment() {
             }
         }
 
+        binding.linearLayoutImportance.setOnClickListener {
+            showImportanceList(binding.textViewImportanceTitle)
+        }
+
+    }
+
+    private fun showImportanceList(view: View) {
+        val popupMenu = PopupMenu(context, view)
+        popupMenu.menuInflater.inflate(R.menu.popupmenu, popupMenu.menu)
+
+        var highImportance = popupMenu.menu.getItem(2)
+        var spannable: SpannableString = SpannableString(highImportance.title.toString())
+        spannable.setSpan(ForegroundColorSpan(ContextCompat.getColor(view.context, R.color.color_light_red)), 0, spannable.length, 0)
+        highImportance.title = spannable
+
+        popupMenu.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener { menuItem: MenuItem? ->
+            binding.textViewImportanceText.text = menuItem?.title
+            if(menuItem!!.itemId == R.id.high)
+                binding.textViewImportanceText.setTextColor(ContextCompat.getColor(view.context, R.color.color_light_red))
+            else
+                binding.textViewImportanceText.setTextColor(ContextCompat.getColor(view.context, R.color.color_light_gray))
+            true
+        })
+        popupMenu.show()
     }
 
     override fun onDestroyView() {

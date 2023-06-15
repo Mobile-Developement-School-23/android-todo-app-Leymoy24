@@ -40,11 +40,10 @@ class ToDoFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.floatingActionButtonAddTask.setColorFilter(Color.argb(255, 255, 255, 255));
+       // binding.floatingActionButtonAddTask.setColorFilter(Color.argb(255, 255, 255, 255));
 
-        val mCollapsingToolbarLayout: CollapsingToolbarLayout = binding.collapsingToolbar
-        mCollapsingToolbarLayout.setExpandedTitleTextAppearance(R.style.ExpandedAppBar)
-        mCollapsingToolbarLayout.setCollapsedTitleTextAppearance(R.style.CollapsedAppBar)
+        binding.collapsingToolbar.setExpandedTitleTextAppearance(R.style.ExpandedAppBar)
+        binding.collapsingToolbar.setCollapsedTitleTextAppearance(R.style.CollapsedAppBar)
 
         recyclerView = binding.recyclerViewTasks
         layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)

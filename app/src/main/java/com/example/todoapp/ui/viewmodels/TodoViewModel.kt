@@ -18,7 +18,12 @@ class TodoViewModel() : ViewModel() {
     val taskList: LiveData<List<TodoItem>> = _taskList
 
     init {
-        val dataSource = TodoItemSource()
+        val dataSource = TodoItemSource
+
+        // Получение начальных данных из TodoDataSource
+        val initialTasks = dataSource.getTasks()
+        _taskList.value = initialTasks
+
         taskRepository = TodoItemRepository(dataSource)
     }
 
@@ -42,6 +47,16 @@ class TodoViewModel() : ViewModel() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 taskRepository.updateTask(taskId, newTaskText)
+                val updatedTasks = taskRepository.getTasks()
+                _taskList.postValue(updatedTasks)
+            }
+        }
+    }
+
+    fun deleteTask(taskId: String) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                taskRepository.deleteTask(taskId)
                 val updatedTasks = taskRepository.getTasks()
                 _taskList.postValue(updatedTasks)
             }

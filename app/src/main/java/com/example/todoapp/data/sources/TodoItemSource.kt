@@ -1,9 +1,14 @@
 package com.example.todoapp.data.sources
 
 import com.example.todoapp.data.models.TodoItem
+import java.util.UUID
 
-class TodoItemSource {
-    private val todoItems: MutableList<TodoItem> = mutableListOf()
+object TodoItemSource {
+    private val todoItems: MutableList<TodoItem> = mutableListOf(
+        TodoItem("Купить молоко", UUID.randomUUID().toString()),
+        TodoItem("Погулять с собакой", UUID.randomUUID().toString()),
+        TodoItem("Сходить в кино", UUID.randomUUID().toString())
+    )
 
     fun addTask(taskText: String, taskId: String) {
         val todoItem = TodoItem(taskText, taskId)
@@ -24,5 +29,9 @@ class TodoItemSource {
         if (index != -1) {
             todoItems[index] = updatedTask
         }
+    }
+
+    fun deleteTask(taskId: String) {
+        todoItems.removeAll { it.taskId == taskId }
     }
 }

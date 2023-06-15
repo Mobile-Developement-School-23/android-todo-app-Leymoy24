@@ -23,4 +23,8 @@ class TodoItemRepository(private val dataSource: TodoItemSource) {
             dataSource.updateTask(updatedTask)
         }
     }
+
+    fun deleteTask(taskId: String) {
+        dataSource.deleteTask(taskId)
+    }
 }
