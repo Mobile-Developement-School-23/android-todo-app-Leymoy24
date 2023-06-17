@@ -221,7 +221,7 @@ class TaskFragment : Fragment() {
         // Следим за изменениями текста в EditText
         editText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                // метод не используется
+                // метод не используется!
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -238,7 +238,7 @@ class TaskFragment : Fragment() {
             }
 
             override fun afterTextChanged(s: Editable?) {
-                // метод не используется
+                // метод не используется!
             }
         })
     }
