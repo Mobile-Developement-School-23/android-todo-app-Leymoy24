@@ -8,11 +8,12 @@
 
     <CheckBox
         android:id="@+id/checkBox_task"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_weight="10"
         android:buttonTint="@color/checkbox_filter_tint"
         android:ellipsize="end"
+        android:maxLines="3"
         android:text="Text"
         android:textSize="16sp" />
 

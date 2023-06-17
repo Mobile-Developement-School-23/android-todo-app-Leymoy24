@@ -2,27 +2,25 @@
     <!-- Base application theme. -->
     <style name="Theme.ToDoApp" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/back_light_primary</item>
-        <item name="colorPrimaryVariant">@color/label_light_primary</item>
-        <item name="colorOnPrimary">@color/label_light_primary</item>
+        <item name="colorPrimary">@color/back_primary</item>
+        <item name="colorPrimaryVariant">@color/back_primary</item>
+        <item name="colorOnPrimary">@color/back_primary</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/label_light_secondary</item>
-        <item name="colorSecondaryVariant">@color/label_light_secondary</item>
-        <item name="colorOnSecondary">@color/back_light_secondary</item>
+        <item name="colorSecondary">@color/label_secondary</item>
+        <item name="colorSecondaryVariant">@color/label_secondary</item>
+        <item name="colorOnSecondary">@color/label_secondary</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor">@color/back_light_primary</item>
+        <item name="android:statusBarColor">@color/back_primary</item>
         <!-- Customize your theme here. -->
-        <item name="android:windowBackground">@color/back_light_primary</item>
-        <item name="recyclerViewStyle">@color/back_light_secondary</item>
-        <item name="android:textViewStyle">@color/label_light_primary</item>
-        <item name="android:textColorTertiary">@color/label_light_tertiary</item>
+        <item name="statusBarBackground">@color/back_secondary</item>
+        <item name="android:textViewStyle">@color/label_primary</item>
         <item name="android:windowLightStatusBar">true</item>
 
     </style>
 
     <style name="BrandedSwitch.control" parent="Theme.AppCompat.Light">
         <!-- active thumb & track color (30% transparency) -->
-        <item name="colorControlActivated">@color/color_light_blue</item>
-        <item name="colorSwitchThumbNormal">@color/back_light_elevated</item>
+        <item name="colorControlActivated">@color/color_blue</item>
+        <item name="colorSwitchThumbNormal">@color/back_elevated</item>
     </style>
 </resources>

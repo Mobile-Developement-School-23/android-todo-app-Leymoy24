@@ -1,6 +1,5 @@
 package com.example.todoapp.ui.fragments
 
-import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -14,7 +13,6 @@ import com.example.todoapp.R
 import com.example.todoapp.ui.adapters.ToDoAdapter
 import com.example.todoapp.databinding.FragmentToDoBinding
 import com.example.todoapp.ui.viewmodels.TodoViewModel
-import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.example.todoapp.data.models.TodoItem
 
 
@@ -40,8 +38,6 @@ class ToDoFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-       // binding.floatingActionButtonAddTask.setColorFilter(Color.argb(255, 255, 255, 255));
-
         binding.collapsingToolbar.setExpandedTitleTextAppearance(R.style.ExpandedAppBar)
         binding.collapsingToolbar.setCollapsedTitleTextAppearance(R.style.CollapsedAppBar)
 
@@ -52,6 +48,7 @@ class ToDoFragment : Fragment() {
         recyclerView.layoutManager = layoutManager
 
         taskViewModel = ViewModelProvider(requireActivity()).get(TodoViewModel::class.java)
+
         taskViewModel.taskList.observe(viewLifecycleOwner) { tasks ->
             adapter.setTasks(tasks)
         }

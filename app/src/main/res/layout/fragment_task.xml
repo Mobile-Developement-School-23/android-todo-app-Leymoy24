@@ -6,6 +6,7 @@
     android:name="com.example.todoapp.AddTaskFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/back_primary"
     tools:context=".ui.fragments.TaskFragment"
     tools:layout="@layout/fragment_task">
 
@@ -20,6 +21,7 @@
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
+            android:background="@color/back_primary"
             android:layout_height="?attr/actionBarSize"
             app:layout_collapseMode="pin"
             app:popupTheme="@style/Widget.AppCompat.Toolbar">
@@ -39,7 +41,7 @@
                 android:layout_marginEnd="16dp"
                 android:background="?attr/selectableItemBackground"
                 android:text="Сохранить"
-                android:textColor="@color/color_light_blue"
+                android:textColor="@color/color_blue"
                 android:textSize="16sp" />
 
         </androidx.appcompat.widget.Toolbar>
@@ -57,35 +59,41 @@
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:background="@color/back_primary"
             android:orientation="vertical">
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardViewText"
                 android:layout_width="match_parent"
-                android:layout_height="130dp"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="10dp"
                 app:cardCornerRadius="10dp"
+                android:background="@color/back_secondary"
+                android:backgroundTint="@color/back_secondary"
                 app:cardPreventCornerOverlap="true"
                 tools:ignore="MissingConstraints">
 
                 <EditText
                     android:id="@+id/editText_enterTask"
-                    android:layout_width="320dp"
-                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="130dp"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
                     android:background="@null"
                     android:focusable="true"
                     android:fontFamily="@font/roboto"
                     android:gravity="top"
+                    android:backgroundTint="@color/back_secondary"
                     android:hint="Что надо сделать..."
                     android:inputType="textMultiLine"
                     android:maxLines="10"
                     android:minLines="1"
                     android:singleLine="false"
-                    android:textColorHint="@color/label_light_tertiary"
+                    android:textColorHint="@color/label_tertiary"
                     android:textSize="16sp">
 
                 </EditText>
@@ -107,6 +115,7 @@
                     android:fontFamily="@font/roboto"
                     android:text="Важность"
                     android:textSize="16sp"
+                    android:textColor="@color/label_primary"
                     tools:ignore="MissingConstraints" />
 
                 <TextView
@@ -117,7 +126,7 @@
                     android:background="@null"
                     android:fontFamily="@font/roboto"
                     android:text="Нет"
-                    android:textColor="@color/label_light_tertiary"
+                    android:textColor="@color/label_tertiary"
                     tools:ignore="MissingConstraints" />
             </LinearLayout>
 
@@ -128,7 +137,7 @@
                 android:layout_marginStart="15dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
-                android:background="@color/color_light_gray_light"
+                android:background="@color/color_gray_light"
                 app:layout_constraintEnd_toEndOf="parent"
                 tools:ignore="MissingConstraints">
 
@@ -136,15 +145,17 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="60dp"
                 android:layout_marginTop="15dp">
 
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/switchCompat"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="16dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginEnd="15dp"
                     app:theme="@style/BrandedSwitch.control">
 
                 </androidx.appcompat.widget.SwitchCompat>
@@ -161,7 +172,16 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginBottom="10dp"
                     tools:ignore="MissingConstraints" />
+
+                <TextView
+                    android:id="@+id/textView_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="@+id/DoTextView"
+                    app:layout_constraintStart_toStartOf="@+id/DoTextView"
+                    app:layout_constraintTop_toBottomOf="@+id/DoTextView" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -170,7 +190,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="1dp"
                 android:layout_marginTop="35dp"
-                android:background="@color/color_light_gray_light"
+                android:background="@color/color_gray_light"
                 app:layout_constraintEnd_toEndOf="parent"
                 tools:ignore="MissingConstraints">
 
@@ -185,7 +205,7 @@
                 android:background="?attr/selectableItemBackground"
                 android:drawableStart="@drawable/delete"
                 android:text="     Удалить"
-                android:textColor="@color/label_light_tertiary"
+                android:textColor="@color/label_tertiary"
                 android:textSize="16sp"
                 tools:ignore="MissingConstraints" />
 

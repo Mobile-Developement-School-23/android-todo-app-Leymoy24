@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-
     <group android:id="@+id/menu_importance" >
         <item
             android:id="@+id/no"
             android:icon="@mipmap/ic_launcher"
-            android:title="Нет"/>
+            android:title="@string/no"/>
         <item
             android:id="@+id/low"
-            android:title="Низкий"/>
+            android:title="@string/low"/>
         <item
             android:id="@+id/high"
-            android:title="!! Высокий">
+            android:title="@string/high">
         </item>
     </group>
 </menu>

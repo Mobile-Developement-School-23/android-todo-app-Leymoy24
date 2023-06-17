@@ -43,6 +43,17 @@ class TodoViewModel() : ViewModel() {
         }
     }
 
+    fun addTask(newTaskText: String, taskImportance: String, taskDeadline: String) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                val taskId = generateTaskId()
+                taskRepository.addTask(newTaskText, taskId, taskImportance, taskDeadline)
+                val updatedTasks = taskRepository.getTasks()
+                _taskList.postValue(updatedTasks)
+            }
+        }
+    }
+
     fun updateTask(taskId: String, newTaskText: String) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
@@ -52,6 +63,35 @@ class TodoViewModel() : ViewModel() {
             }
         }
     }
+
+    fun updateTaskImportance(taskId: String, importance: String) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                taskRepository.updateTaskImportance(taskId, importance)
+            }
+        }
+    }
+
+    fun updateDeadline(taskId: String, newDate: String)
+    {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                taskRepository.updateDeadline(taskId, newDate)
+                val updatedTasks = taskRepository.getTasks()
+                _taskList.postValue(updatedTasks)
+            }
+        }
+    }
+
+//    fun updateTask(todoItem: TodoItem) {
+//        viewModelScope.launch {
+//            withContext(Dispatchers.IO) {
+//                taskRepository.updateTask(todoItem)
+//                val updatedTasks = taskRepository.getTasks()
+//                _taskList.postValue(updatedTasks)
+//            }
+//        }
+//    }
 
     fun deleteTask(taskId: String) {
         viewModelScope.launch {
@@ -63,7 +103,7 @@ class TodoViewModel() : ViewModel() {
         }
     }
 
-    fun getTaskById(taskId: String): String? {
+    fun getTaskById(taskId: String): TodoItem? {
         return taskRepository.getTaskById(taskId)
     }
 
