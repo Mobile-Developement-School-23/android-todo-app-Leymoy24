@@ -1,6 +1,5 @@
 package com.example.todoapp.ui.fragments
 
-import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.SpannableString
@@ -30,6 +29,7 @@ class TaskFragment : Fragment() {
     private var _binding: FragmentTaskBinding? = null
     private val binding get() = _binding!!
     private lateinit var taskViewModel: TodoViewModel
+    private lateinit var taskViewModelPast: TodoViewModel
     private lateinit var taskId: String
 
     override fun onCreateView(
@@ -45,7 +45,7 @@ class TaskFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         taskViewModel = ViewModelProvider(requireActivity()).get(TodoViewModel::class.java)
-
+        taskViewModelPast = ViewModelProvider(requireActivity()).get(TodoViewModel::class.java)
 
         taskId = TaskFragmentArgs.fromBundle(requireArguments()).taskId
 
@@ -54,6 +54,7 @@ class TaskFragment : Fragment() {
             todoItem?.let {
                 binding.editTextEnterTask.setText(todoItem.taskText)
                 binding.textViewImportanceText.text = todoItem.importance
+                binding.textViewDate.text = todoItem.deadline
                 if (todoItem.importance == "!! Высокий") {
                     binding.textViewImportanceText.setTextColor(
                         ContextCompat.getColor(
@@ -76,7 +77,7 @@ class TaskFragment : Fragment() {
 
             if (taskText.isNotEmpty()) {
                 if (taskId.isNotEmpty() && taskId != "defaultTaskId") {
-                    taskViewModel.updateTask(taskId, taskText)
+                    taskViewModel.updateTask(taskId, taskText, taskImportance)
                 } else {
                     taskViewModel.addTask(taskText, taskImportance, taskDeadline)
                 }
@@ -134,10 +135,9 @@ class TaskFragment : Fragment() {
                     val formatted: String = format.format(utc.time)
                     binding.textViewDate.text = formatted
                 }
-            }
-            else {
+            } else {
                 binding.textViewDate.text = ""
-                taskViewModel.getTaskById(taskId)!!.deadline = ""
+                //taskViewModel.getTaskById(taskId)!!.deadline = ""
             }
         }
 
@@ -177,7 +177,7 @@ class TaskFragment : Fragment() {
                 )
                 todoItem?.let {
                     val importance = getString(R.string.high)
-                    taskViewModel.updateTaskImportance(it.taskId, importance)
+                    binding.textViewImportanceText.text = importance
                 }
             } else if (menuItem.itemId == R.id.low) {
                 binding.textViewImportanceText.setTextColor(
@@ -188,7 +188,7 @@ class TaskFragment : Fragment() {
                 )
                 todoItem?.let {
                     val importance = getString(R.string.low)
-                    taskViewModel.updateTaskImportance(it.taskId, importance)
+                    binding.textViewImportanceText.text = importance
                 }
             } else {
                 binding.textViewImportanceText.setTextColor(
@@ -199,7 +199,7 @@ class TaskFragment : Fragment() {
                 )
                 todoItem?.let {
                     val importance = getString(R.string.no)
-                    taskViewModel.updateTaskImportance(it.taskId, importance)
+                    binding.textViewImportanceText.text = importance
                 }
             }
             true

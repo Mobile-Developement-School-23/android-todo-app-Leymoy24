@@ -17,14 +17,14 @@ class TodoItemRepository(private val dataSource: TodoItemSource) {
         return dataSource.getTaskById(taskId)
     }
 
-    fun updateTask(taskId: String, taskText: String) {
+    fun updateTask(taskId: String, taskText: String, taskImportance: String) {
         val taskToUpdate = dataSource.getTaskById(taskId)
         if (taskToUpdate != null) {
             val updatedTask = TodoItem(
                 taskText,
                 taskId,
                 dataSource.getFlag(taskToUpdate),
-                dataSource.getImportance(taskToUpdate),
+                taskImportance,
                 dataSource.getDeadline(taskToUpdate)
             )
             dataSource.updateTask(updatedTask)

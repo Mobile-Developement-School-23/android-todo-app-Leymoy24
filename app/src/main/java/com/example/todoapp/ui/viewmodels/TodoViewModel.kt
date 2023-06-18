@@ -48,10 +48,10 @@ class TodoViewModel() : ViewModel() {
         }
     }
 
-    fun updateTask(taskId: String, newTaskText: String) {
+    fun updateTask(taskId: String, newTaskText: String, taskImportance: String) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                taskRepository.updateTask(taskId, newTaskText)
+                taskRepository.updateTask(taskId, newTaskText, taskImportance)
                 val updatedTasks = taskRepository.getTasks()
                 _taskList.postValue(updatedTasks)
             }
