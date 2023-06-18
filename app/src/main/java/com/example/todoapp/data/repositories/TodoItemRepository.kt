@@ -66,4 +66,12 @@ class TodoItemRepository(private val dataSource: TodoItemSource) {
     fun getCompletedTasks(): Int {
         return dataSource.getCompletedTasks()
     }
+
+    fun getShowDone(): Boolean {
+        return dataSource.getShowDone()
+    }
+
+    fun updateShowDone(newValue: Boolean) {
+        dataSource.updateShowDone(newValue)
+    }
 }

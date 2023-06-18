@@ -4,6 +4,7 @@ import com.example.todoapp.data.models.TodoItem
 import java.util.UUID
 
 object TodoItemSource {
+    private var showDone: Boolean = true
     private var completedTasks = 4
     private val todoItems: MutableList<TodoItem> = mutableListOf(
         TodoItem("Сходить в магазин", UUID.randomUUID().toString(), false, "Нет", "25 июня 2023"),
@@ -67,4 +68,11 @@ object TodoItemSource {
         return completedTasks
     }
 
+    fun getShowDone(): Boolean {
+        return showDone
+    }
+
+    fun updateShowDone(newValue: Boolean) {
+        showDone = newValue
+    }
 }

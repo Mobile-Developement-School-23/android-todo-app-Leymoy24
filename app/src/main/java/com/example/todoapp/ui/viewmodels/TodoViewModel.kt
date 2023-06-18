@@ -14,6 +14,7 @@ import java.util.UUID
 
 class TodoViewModel() : ViewModel() {
     private val taskRepository: TodoItemRepository
+
     private val _taskList: MutableLiveData<List<TodoItem>> = MutableLiveData()
     val taskList: LiveData<List<TodoItem>> = _taskList
 
@@ -95,5 +96,18 @@ class TodoViewModel() : ViewModel() {
         val currentCount = _completedTaskCount.value ?: 0
         val newCount = currentCount + change
         _completedTaskCount.value = newCount
+    }
+
+    fun getUncompletedTasks(): List<TodoItem> {
+        val allTasks = taskList.value
+        return allTasks?.filter { !it.isCompleted } ?: emptyList()
+    }
+
+    fun updateShowDone(change: Boolean) {
+        taskRepository.updateShowDone(change)
+    }
+
+    fun getShowDone(): Boolean {
+        return taskRepository.getShowDone()
     }
 }
