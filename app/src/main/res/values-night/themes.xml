@@ -1,17 +1,12 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Theme.ToDoApp" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/back_primary</item>
-        <item name="colorPrimaryVariant">@color/back_primary</item>
-        <item name="colorOnPrimary">@color/back_primary</item>
-        <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/label_secondary</item>
-        <item name="colorSecondaryVariant">@color/label_secondary</item>
-        <item name="colorOnSecondary">@color/label_secondary</item>
-        <!-- Status bar color. -->
-        <item name="android:statusBarColor">@color/back_primary</item>
-        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/color_blue</item>
+        <item name="colorPrimaryVariant">@color/color_gray</item>
+        <item name="colorOnPrimary">@color/label_primary</item>
+        <item name="colorSecondary">@color/label_primary</item>
+        <item name="colorSecondaryVariant">@color/color_gray</item>
+        <item name="colorOnSecondary">@color/color_gray</item>
         <item name="statusBarBackground">@color/back_secondary</item>
         <item name="android:textViewStyle">@color/label_primary</item>
     </style>
@@ -21,4 +16,5 @@
         <item name="colorControlActivated">@color/color_blue</item>
         <item name="colorSwitchThumbNormal">@color/back_elevated</item>
     </style>
+
 </resources>

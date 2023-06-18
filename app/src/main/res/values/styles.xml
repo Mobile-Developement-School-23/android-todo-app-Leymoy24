@@ -13,4 +13,24 @@
         <item name="fontFamily">@font/roboto</item>
         <item name="android:textStyle">bold</item>
     </style>
+
+    <style name="DatePickerStyle" parent="Theme.MaterialComponents.DayNight">
+        <item name="colorAccent">@color/color_blue</item>
+        <item name="colorSecondary">@color/color_blue</item>
+        <item name="colorControlActivated">@color/color_blue</item>
+        <item name="colorControlHighlight">@color/color_blue</item>
+        <item name="android:windowBackground">@color/back_secondary</item>
+        <item name="android:textColor">@color/color_white</item>
+        <item name="android:colorPrimary">@color/color_blue</item>
+        <item name="android:textColorSecondary">@color/label_tertiary</item>
+        <item name="android:textColorPrimary">@color/back_primary</item>
+        <item name="android:textColorPrimaryInverse">@color/color_white</item>
+        <item name="android:textColorSecondaryInverse">@color/color_white</item>
+        <item name="android:buttonBarNegativeButtonStyle">@style/DatePickerTheme.ButtonBarButton </item>
+        <item name="android:buttonBarPositiveButtonStyle">@style/DatePickerTheme.ButtonBarButton </item>
+    </style>
+    <style name="DatePickerTheme.ButtonBarButton" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/color_blue</item>
+    </style>
+
 </resources>

@@ -1,5 +1,6 @@
 package com.example.todoapp.ui.fragments
 
+import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.SpannableString
@@ -117,6 +118,7 @@ class TaskFragment : Fragment() {
 
 
         val builder: MaterialDatePicker.Builder<*> = MaterialDatePicker.Builder.datePicker()
+//        builder.setTheme(R.style.DatePickerStyle)
         binding.switchCompat.setOnCheckedChangeListener { _, _ ->
             builder.setTitleText("Выберите дату")
             val picker: MaterialDatePicker<*> = builder.build()
@@ -132,8 +134,6 @@ class TaskFragment : Fragment() {
                 binding.textViewDate.text = formatted
             }
         }
-
-
 
         binding.linearLayoutImportance.setOnClickListener {
             showImportanceList(binding.textViewImportanceTitle)
