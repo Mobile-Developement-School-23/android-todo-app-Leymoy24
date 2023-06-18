@@ -118,22 +118,29 @@ class TaskFragment : Fragment() {
 
 
         val builder: MaterialDatePicker.Builder<*> = MaterialDatePicker.Builder.datePicker()
-//        builder.setTheme(R.style.DatePickerStyle)
-        binding.switchCompat.setOnCheckedChangeListener { _, _ ->
-            builder.setTitleText("Выберите дату")
-            val picker: MaterialDatePicker<*> = builder.build()
-            fragmentManager?.let { manager ->
-                picker.show(manager, picker.toString())
-            }
+        builder.setTitleText("Выберите дату")
+        val picker: MaterialDatePicker<*> = builder.build()
 
-            picker.addOnPositiveButtonClickListener {
-                val utc = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
-                utc.timeInMillis = it as Long
-                val format = SimpleDateFormat("d MMMM yyyy")
-                val formatted: String = format.format(utc.time)
-                binding.textViewDate.text = formatted
+        binding.switchCompat.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                fragmentManager?.let { manager ->
+                    picker.show(manager, picker.toString())
+                }
+
+                picker.addOnPositiveButtonClickListener {
+                    val utc = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+                    utc.timeInMillis = it as Long
+                    val format = SimpleDateFormat("d MMMM yyyy")
+                    val formatted: String = format.format(utc.time)
+                    binding.textViewDate.text = formatted
+                }
+            }
+            else {
+                binding.textViewDate.text = ""
+                taskViewModel.getTaskById(taskId)!!.deadline = ""
             }
         }
+
 
         binding.linearLayoutImportance.setOnClickListener {
             showImportanceList(binding.textViewImportanceTitle)
@@ -148,7 +155,7 @@ class TaskFragment : Fragment() {
         val todoItem: TodoItem? = taskViewModel.getTaskById(taskId)
 
         val highImportance = popupMenu.menu.getItem(2)
-        val spannable: SpannableString = SpannableString(highImportance.title.toString())
+        val spannable = SpannableString(highImportance.title.toString())
         spannable.setSpan(
             ForegroundColorSpan(
                 ContextCompat.getColor(
