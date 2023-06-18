@@ -4,9 +4,6 @@ import com.example.todoapp.data.models.TodoItem
 import com.example.todoapp.data.sources.TodoItemSource
 
 class TodoItemRepository(private val dataSource: TodoItemSource) {
-    fun addTask(taskText: String, taskId: String) {
-        dataSource.addTask(taskText, taskId)
-    }
 
     fun addTask(newTaskText: String, taskId: String, taskImportance: String, taskDeadline: String) {
         dataSource.addTask(newTaskText, taskId, taskImportance, taskDeadline)
@@ -32,10 +29,6 @@ class TodoItemRepository(private val dataSource: TodoItemSource) {
             )
             dataSource.updateTask(updatedTask)
         }
-    }
-
-    fun updateTask(todoItem: TodoItem) {
-        dataSource.updateTask(todoItem)
     }
 
     fun deleteTask(taskId: String) {
@@ -68,5 +61,9 @@ class TodoItemRepository(private val dataSource: TodoItemSource) {
             )
             dataSource.updateTask(updatedTask)
         }
+    }
+
+    fun getCompletedTasks(): Int {
+        return dataSource.getCompletedTasks()
     }
 }

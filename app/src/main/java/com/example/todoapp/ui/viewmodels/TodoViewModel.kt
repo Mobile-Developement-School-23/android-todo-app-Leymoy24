@@ -17,30 +17,24 @@ class TodoViewModel() : ViewModel() {
     private val _taskList: MutableLiveData<List<TodoItem>> = MutableLiveData()
     val taskList: LiveData<List<TodoItem>> = _taskList
 
+    private val _completedTaskCount = MutableLiveData<Int>()
+    val completedTaskCount: LiveData<Int> = _completedTaskCount
+
     init {
         val dataSource = TodoItemSource
+        taskRepository = TodoItemRepository(dataSource)
 
-        // Получение начальных данных из TodoDataSource
-        val initialTasks = dataSource.getTasks()
+        // Получение начальных данных из TodoItemRepository
+        val initialTasks = taskRepository.getTasks()
         _taskList.value = initialTasks
 
-        taskRepository = TodoItemRepository(dataSource)
+        val initialCompletedTasks = taskRepository.getCompletedTasks()
+        _completedTaskCount.value = initialCompletedTasks
     }
 
     // Генерация уникального идентификатора
     private fun generateTaskId(): String {
         return UUID.randomUUID().toString()
-    }
-
-    fun addTask(taskText: String) {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                val taskId = generateTaskId()
-                taskRepository.addTask(taskText, taskId)
-                val updatedTasks = taskRepository.getTasks()
-                _taskList.postValue(updatedTasks)
-            }
-        }
     }
 
     fun addTask(newTaskText: String, taskImportance: String, taskDeadline: String) {
@@ -83,16 +77,6 @@ class TodoViewModel() : ViewModel() {
         }
     }
 
-//    fun updateTask(todoItem: TodoItem) {
-//        viewModelScope.launch {
-//            withContext(Dispatchers.IO) {
-//                taskRepository.updateTask(todoItem)
-//                val updatedTasks = taskRepository.getTasks()
-//                _taskList.postValue(updatedTasks)
-//            }
-//        }
-//    }
-
     fun deleteTask(taskId: String) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
@@ -107,7 +91,9 @@ class TodoViewModel() : ViewModel() {
         return taskRepository.getTaskById(taskId)
     }
 
-    fun getTasks(): List<TodoItem> {
-        return taskRepository.getTasks()
+    fun updateCompletedTaskCount(change: Int) {
+        val currentCount = _completedTaskCount.value ?: 0
+        val newCount = currentCount + change
+        _completedTaskCount.value = newCount
     }
 }

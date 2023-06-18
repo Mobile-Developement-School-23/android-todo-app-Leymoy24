@@ -53,9 +53,17 @@ class ToDoFragment : Fragment() {
             adapter.setTasks(tasks)
         }
 
+        taskViewModel.completedTaskCount.observe(viewLifecycleOwner) { count ->
+            binding.textViewDone.text = getString(R.string.done, count)
+        }
+
         adapter.setOnItemClickListener(object : ToDoAdapter.OnItemClickListener {
             override fun onItemClick(todoItem: TodoItem) {
                 navigateToTaskFragment(todoItem)
+            }
+
+            override fun onCompletedTaskCountChanged(count: Int) {
+                taskViewModel.updateCompletedTaskCount(count)
             }
         })
 

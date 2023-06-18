@@ -20,7 +20,7 @@ class ToDoAdapter : RecyclerView.Adapter<ToDoViewHolder>() {
                 R.layout.task_item,
                 parent,
                 false
-            )
+            ), onItemClickListener!!
         )
     }
 
@@ -42,6 +42,7 @@ class ToDoAdapter : RecyclerView.Adapter<ToDoViewHolder>() {
 
     interface OnItemClickListener {
         fun onItemClick(todoItem: TodoItem)
+        fun onCompletedTaskCountChanged(count: Int)
     }
 
     fun setOnItemClickListener(listener: OnItemClickListener) {
