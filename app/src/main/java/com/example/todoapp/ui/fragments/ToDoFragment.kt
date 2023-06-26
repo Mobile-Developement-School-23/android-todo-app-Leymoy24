@@ -49,15 +49,18 @@ class ToDoFragment : Fragment() {
 
         taskViewModel = ViewModelProvider(requireActivity()).get(TodoViewModel::class.java)
 
-        taskViewModel.taskList.observe(viewLifecycleOwner) { tasks ->
-            val currentValue =
-                taskViewModel.getShowDone() // Получаем состояние иконки "Скрыть выполненные"
+        taskViewModel.taskList.observe(viewLifecycleOwner) {
+            val currentValue = taskViewModel.getShowDone() // Получаем состояние глазика
+            if (currentValue) {
+                binding.imageButtonVisibility.setImageResource(R.drawable.visibility)
+            } else {
+                binding.imageButtonVisibility.setImageResource(R.drawable.visibility_off)
+            }
             val tasksToShow = if (currentValue) {
                 taskViewModel.taskList.value // Показать все задачи
             } else {
                 taskViewModel.getUncompletedTasks() // Показать только невыполненные задачи
             }
-            taskViewModel.updateShowDone(!currentValue)
             adapter.setTasks(tasksToShow!!)
         }
 
@@ -74,26 +77,19 @@ class ToDoFragment : Fragment() {
                 taskViewModel.updateCompletedTaskCount(count)
             }
         })
-
-        val resource1 = R.drawable.visibility
-        val resource2 = R.drawable.visibility_off
-        var currentResource = resource1
-//        val currentValue = taskViewModel.getShowDone()
         binding.imageButtonVisibility.setOnClickListener {
-            val currentValue = taskViewModel.getShowDone()
-            // Переключаем текущий ресурс на альтернативный
-            currentResource = if (currentResource == resource1) {
-                resource2
-            } else resource1
-            binding.imageButtonVisibility.setImageResource(currentResource)
-
-            val tasksToShow = if (currentValue) {
-                taskViewModel.taskList.value // Показать все задачи
-            } else {
-                taskViewModel.getUncompletedTasks() // Показать только невыполненные задачи
+            val currentValue = taskViewModel.getShowDone() // Получаем текущее состояние глазика
+            lateinit var tasksToShow: List<TodoItem> // здесь будет итоговый список тасков, который необходимо отобразить
+            if (currentValue) { // если глазик "включен", значит, необходимо его переключить на "выкл" и отобразить только невыполненные
+                tasksToShow = taskViewModel.getUncompletedTasks()
+                binding.imageButtonVisibility.setImageResource(R.drawable.visibility_off)
+                taskViewModel.updateShowDone(!currentValue) // обновляем состояние глазика в репозитории
+            } else { // если глазик "выключен", значит, необходимо его переключить на "вкл" и отобразить все таски
+                tasksToShow = taskViewModel.taskList.value!!
+                binding.imageButtonVisibility.setImageResource(R.drawable.visibility)
+                taskViewModel.updateShowDone(!currentValue) // обновляем состояние глазика в репозитории
             }
-            taskViewModel.updateShowDone(!currentValue)
-            adapter.setTasks(tasksToShow!!)
+            adapter.setTasks(tasksToShow) // устанавливаем в адаптер итоговый список тасков
         }
 
         binding.floatingActionButtonAddTask.setOnClickListener {
