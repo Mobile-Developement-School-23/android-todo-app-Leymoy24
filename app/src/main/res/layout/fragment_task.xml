@@ -126,7 +126,7 @@
                     android:background="@null"
                     android:fontFamily="@font/roboto"
                     android:text="Нет"
-                    android:textColor="@color/label_tertiary"
+                    android:textColor="@color/label_disable"
                     tools:ignore="MissingConstraints" />
             </LinearLayout>
 
