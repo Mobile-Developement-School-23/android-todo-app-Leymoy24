@@ -3,24 +3,21 @@ package com.example.todoapp.ui.adapters
 import android.content.res.ColorStateList
 import android.graphics.Paint
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.CheckBox
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todoapp.R
-import com.example.todoapp.TodoDiffCallback
+import com.example.todoapp.ui.adapters.diffutil.TodoDiffCallback
 import com.example.todoapp.data.database.Task
-import com.example.todoapp.databinding.FragmentToDoBinding
 import com.example.todoapp.databinding.TaskItemBinding
-import com.example.todoapp.ui.fragments.TaskFragmentDirections
-import com.example.todoapp.ui.fragments.ToDoFragment
 import com.example.todoapp.ui.fragments.ToDoFragmentDirections
 
-class TaskAdapter(private val listener: TaskAdapterListener) : ListAdapter<Task, TaskViewHolder>(TodoDiffCallback()) {
+class TaskAdapter(private val listener: TaskAdapterListener) : ListAdapter<Task, TaskViewHolder>(
+    TodoDiffCallback()
+) {
 
     interface TaskAdapterListener {
         fun onTaskCheckboxClicked(task: Task, isChecked: Boolean)
@@ -33,8 +30,8 @@ class TaskAdapter(private val listener: TaskAdapterListener) : ListAdapter<Task,
     }
 
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
-        holder.onBind(getItem(position))
         val currentItem = getItem(position)
+        holder.onBind(currentItem)
 
         holder.infoView.setOnClickListener {
             val action = ToDoFragmentDirections.actionFragmentToDoToTaskFragment(currentItem)
@@ -70,7 +67,7 @@ class TaskViewHolder(
                 checkBoxTask.setTextColor(
                     ContextCompat.getColor(
                         itemView.context,
-                        R.color.label_tertiary
+                        R.color.label_tertiary // зачеркиваю текст, цвет серый
                     )
                 )
             } else {
@@ -79,10 +76,19 @@ class TaskViewHolder(
                 checkBoxTask.setTextColor(
                     ContextCompat.getColor(
                         itemView.context,
-                        R.color.label_primary
+                        R.color.label_primary // возвращаю текст, цвет черный (на светлой теме)
                     )
                 )
-                if (task.importance == "!! Высокий") {
+            }
+            if (task.importance == "!! Высокий") {
+                if (task.isCompleted) {
+                    checkBoxTask.buttonTintList = ColorStateList.valueOf(
+                        ContextCompat.getColor(
+                            itemView.context,
+                            R.color.color_green
+                        )
+                    )
+                } else {
                     checkBoxTask.buttonTintList = ColorStateList.valueOf(
                         ContextCompat.getColor(
                             itemView.context,
@@ -90,40 +96,49 @@ class TaskViewHolder(
                         )
                     )
                 }
-            }
-
-            checkBoxTask.setOnCheckedChangeListener { _, isChecked ->
-                task.isCompleted = isChecked
-                if (isChecked) {
-                    checkBoxTask.paintFlags = checkBoxTask.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
-                    checkBoxTask.setTextColor(
-                        ContextCompat.getColor(
-                            itemView.context,
-                            R.color.label_tertiary
-                        )
-                    )
-//                    task.isCompleted = true
+            } else {
+                if (task.isCompleted) {
                     checkBoxTask.buttonTintList = ColorStateList.valueOf(
                         ContextCompat.getColor(
                             itemView.context,
                             R.color.color_green
                         )
                     )
-                    //onItemClickListener.onCompletedTaskCountChanged(1)
+                } else {
+                    checkBoxTask.buttonTintList = ColorStateList.valueOf(
+                        ContextCompat.getColor(
+                            itemView.context,
+                            R.color.checkbox_filter_tint
+                        )
+                    )
+                }
+            }
+
+            checkBoxTask.setOnCheckedChangeListener(null) // Удаляем предыдущего слушателя
+            checkBoxTask.setOnClickListener{
+                task.isCompleted = !task.isCompleted
+
+                if (task.isCompleted) {
+                    checkBoxTask.paintFlags = checkBoxTask.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+                    checkBoxTask.setTextColor(
+                        ContextCompat.getColor(
+                            itemView.context,
+                            R.color.label_tertiary // зачеркиваю текст, цвет серый
+                        )
+                    )
+                    checkBoxTask.buttonTintList = ColorStateList.valueOf(
+                        ContextCompat.getColor(
+                            itemView.context,
+                            R.color.color_green
+                        )
+                    )
                 } else {
                     checkBoxTask.paintFlags =
                         checkBoxTask.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
                     checkBoxTask.setTextColor(
                         ContextCompat.getColor(
                             itemView.context,
-                            R.color.label_primary
-                        )
-                    )
-//                    task.isCompleted = false
-                    checkBoxTask.buttonTintList = ColorStateList.valueOf(
-                        ContextCompat.getColor(
-                            itemView.context,
-                            R.color.support_separator
+                            R.color.label_primary // возвращаю текст, цвет черный (на светлой теме)
                         )
                     )
                     if (task.importance == "!! Высокий") {
@@ -133,10 +148,17 @@ class TaskViewHolder(
                                 R.color.color_red
                             )
                         )
+                    } else {
+                        checkBoxTask.buttonTintList = ColorStateList.valueOf(
+                            ContextCompat.getColor(
+                                itemView.context,
+                                R.color.checkbox_filter_tint
+                            )
+                        )
                     }
-                    //onItemClickListener.onCompletedTaskCountChanged(-1)
                 }
-                listener?.onTaskCheckboxClicked(task, isChecked)
+
+                listener?.onTaskCheckboxClicked(task, task.isCompleted)
             }
         }
     }
@@ -152,72 +174,3 @@ class TaskViewHolder(
             ).let(::TaskViewHolder)
     }
 }
-
-//class TaskAdapter: RecyclerView.Adapter<TaskAdapter.TaskViewHolder>() {
-//
-//    private var taskList = emptyList<Task>()
-//
-//    class TaskViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
-//        private val checkBoxTask: CheckBox = itemView.findViewById(R.id.checkBox_task)
-//        val infoView: ImageView = itemView.findViewById(R.id.imageView_info_task)
-//
-//        fun onBind(task: Task) {
-//            checkBoxTask.text = task.taskText
-//            checkBoxTask.isChecked = task.isCompleted
-//
-//            if (task.isCompleted) {
-//                checkBoxTask.paintFlags = checkBoxTask.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
-//                checkBoxTask.setTextColor(ContextCompat.getColor(itemView.context, R.color.label_tertiary))
-//            } else {
-//                checkBoxTask.paintFlags = checkBoxTask.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
-//                checkBoxTask.setTextColor(ContextCompat.getColor(itemView.context, R.color.label_primary))
-//                if (task.importance == "!! Высокий") {
-//                    checkBoxTask.buttonTintList= ColorStateList.valueOf(ContextCompat.getColor(itemView.context, R.color.color_red))
-//                }
-//            }
-//
-//            checkBoxTask.setOnCheckedChangeListener { _, isChecked ->
-//                task.isCompleted = isChecked
-//                if (isChecked) {
-//                    checkBoxTask.paintFlags = checkBoxTask.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
-//                    checkBoxTask.setTextColor(ContextCompat.getColor(itemView.context, R.color.label_tertiary))
-////                    task.isCompleted = true
-//                    checkBoxTask.buttonTintList= ColorStateList.valueOf(ContextCompat.getColor(itemView.context, R.color.color_green))
-//                    //onItemClickListener.onCompletedTaskCountChanged(1)
-//                } else {
-//                    checkBoxTask.paintFlags = checkBoxTask.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
-//                    checkBoxTask.setTextColor(ContextCompat.getColor(itemView.context, R.color.label_primary))
-////                    task.isCompleted = false
-//                    checkBoxTask.buttonTintList= ColorStateList.valueOf(ContextCompat.getColor(itemView.context, R.color.support_separator))
-//                    if (task.importance == "!! Высокий") {
-//                        checkBoxTask.buttonTintList= ColorStateList.valueOf(ContextCompat.getColor(itemView.context, R.color.color_red))
-//                    }
-//                    //onItemClickListener.onCompletedTaskCountChanged(-1)
-//                }
-//            }
-//        }
-//    }
-//
-//    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
-//        return TaskViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.task_item, parent, false))
-//    }
-//
-//    override fun getItemCount(): Int {
-//        return taskList.size
-//    }
-//
-//    override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
-//        val currentItem = taskList[position]
-//        holder.onBind(currentItem)
-//
-//        holder.infoView.setOnClickListener {
-//            val action = ToDoFragmentDirections.actionFragmentToDoToTaskFragment(currentItem)
-//            holder.itemView.findNavController().navigate(action)
-//        }
-//    }
-//
-//    fun setData(tasks: List<Task>) {
-//        this.taskList = tasks
-//        notifyDataSetChanged()
-//    }
-//}

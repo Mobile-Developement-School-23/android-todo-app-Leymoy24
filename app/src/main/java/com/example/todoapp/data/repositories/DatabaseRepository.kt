@@ -20,17 +20,3 @@ class DatabaseRepository(private val db: TasksDatabase) {
     suspend fun update(task: Task) = dao.update(task)
 
 }
-
-
-//class DatabaseRepository(private val taskDao: ToDoDao) {
-//
-//    val getAllData: LiveData<List<Task>> = taskDao.getAllData()
-//
-//    suspend fun add(task: Task) { taskDao.add(task) }
-//
-//    suspend fun update(task: Task) { taskDao.update(task) }
-//
-//    suspend fun delete(task: Task) { taskDao.delete(task) }
-//
-//    fun getCountCompleted(): LiveData<Int> { return taskDao.getCountCompleted() }
-//}

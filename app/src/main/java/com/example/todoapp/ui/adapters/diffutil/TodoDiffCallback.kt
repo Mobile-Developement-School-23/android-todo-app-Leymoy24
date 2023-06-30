@@ -1,4 +1,4 @@
-package com.example.todoapp
+package com.example.todoapp.ui.adapters.diffutil
 
 import androidx.recyclerview.widget.DiffUtil
 import com.example.todoapp.data.database.Task

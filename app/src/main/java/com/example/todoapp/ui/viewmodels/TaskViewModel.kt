@@ -6,58 +6,65 @@ import androidx.lifecycle.viewModelScope
 import com.example.todoapp.data.database.Task
 import com.example.todoapp.data.repositories.DatabaseRepository
 import com.example.todoapp.locateLazy
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 
-class TaskViewModel: ViewModel() {
+class TaskViewModel : ViewModel() {
 
     private val repository: DatabaseRepository by locateLazy()
 
-    val tasks = repository.getAllData().asLiveDataFlow()
+    var job : Job? = null
+
+    private val _tasks = MutableSharedFlow<List<Task>>()
+    val tasks: SharedFlow<List<Task>> = _tasks.asSharedFlow()
+
+    var showAll = true
+
+    init {
+        loadTasks()
+    }
+
+    fun changeMode() {
+        job?.cancel()
+        showAll = !showAll
+        loadTasks()
+    }
+
+    fun changeVisibilityButton(flag: Boolean): Boolean { return !flag }
+
+    private fun loadTasks() {
+        job = viewModelScope.launch(Dispatchers.IO) {
+            _tasks.emitAll(repository.getAllData())
+        }
+    }
 
     fun add(task: Task) {
-        viewModelScope.launch { repository.add(task) }
+        viewModelScope.launch(Dispatchers.IO) { repository.add(task) }
     }
 
     fun delete(task: Task) {
-        viewModelScope.launch { repository.delete(task) }
+        viewModelScope.launch(Dispatchers.IO) { repository.delete(task) }
     }
 
     fun update(task: Task) {
-        viewModelScope.launch { repository.update(task) }
+        viewModelScope.launch(Dispatchers.IO) { repository.update(task) }
     }
 
-    fun getCountCompleted(): LiveData<Int> { return repository.getCountCompleted() }
+    fun getCountCompleted(): LiveData<Int> {
+        return repository.getCountCompleted()
+    }
 
-    fun <T> Flow<T>.asLiveDataFlow() = shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
+    override fun onCleared() {
+        super.onCleared()
+        job?.cancel()
+    }
 }
-
-//class TaskViewModel(application: Application) : AndroidViewModel(application) {
-//
-//    val getAllData: LiveData<List<Task>>
-//    private val repository: DatabaseRepository
-//
-//    init {
-//        val taskDao = TasksDatabase.getDatabase(application).tasksDao()
-//        repository = DatabaseRepository(taskDao)
-//        getAllData = repository.getAllData
-//    }
-//
-//    fun add(task: Task) {
-//        viewModelScope.launch(Dispatchers.IO) { repository.add(task) }
-//    }
-//
-//    fun update(task: Task) {
-//        viewModelScope.launch(Dispatchers.IO) { repository.update(task) }
-//    }
-//
-//    fun delete(task: Task) {
-//        viewModelScope.launch(Dispatchers.IO) { repository.delete(task) }
-//    }
-//
-//    fun getCountCompleted(): LiveData<Int> {
-//        return repository.getCountCompleted()
-//    }
-//}
