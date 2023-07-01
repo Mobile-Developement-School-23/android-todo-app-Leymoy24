@@ -1,5 +1,7 @@
 package com.example.todoapp.ui.fragments
 
+import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.SpannableString
@@ -19,9 +21,16 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.todoapp.R
 import com.example.todoapp.data.database.Task
+import com.example.todoapp.data.models.Product
+import com.example.todoapp.data.retrofit.TaskApi
 import com.example.todoapp.databinding.FragmentTaskBinding
 import com.example.todoapp.ui.viewmodels.TaskViewModel
 import com.google.android.material.datepicker.MaterialDatePicker
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.TimeZone
@@ -29,11 +38,17 @@ import java.util.TimeZone
 
 class TaskFragment : Fragment() {
 
+    lateinit var mContext: Context
     private lateinit var mTaskViewModel: TaskViewModel
 
     private var _binding: FragmentTaskBinding? = null
     private val binding get() = _binding!!
     private val args by navArgs<TaskFragmentArgs>()
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        mContext = context
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,

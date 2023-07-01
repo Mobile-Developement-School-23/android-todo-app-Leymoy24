@@ -1,9 +1,13 @@
 package com.example.todoapp.data.models
 
+import java.util.Date
+
 data class TodoItem(
-    var taskText: String,
-    val taskId: String,
-    var isCompleted: Boolean = false,
-    var importance: String = "Нет",
-    var deadline: String
+    val id: String,
+    val text: String,
+    val importance: String,
+    val deadline: Date?,
+    val done: Boolean,
+    val createdAt: Date,
+    var changedAt: Date?
 )
