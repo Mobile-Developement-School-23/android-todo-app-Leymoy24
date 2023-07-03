@@ -1,6 +1,5 @@
 package com.example.todoapp.ui.fragments
 
-import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.text.Editable
@@ -21,16 +20,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.todoapp.R
 import com.example.todoapp.data.database.Task
-import com.example.todoapp.data.models.Product
-import com.example.todoapp.data.retrofit.TaskApi
 import com.example.todoapp.databinding.FragmentTaskBinding
 import com.example.todoapp.ui.viewmodels.TaskViewModel
 import com.google.android.material.datepicker.MaterialDatePicker
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.TimeZone
