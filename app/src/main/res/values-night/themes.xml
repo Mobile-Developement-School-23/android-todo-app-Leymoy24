@@ -1,12 +1,17 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Theme.ToDoApp" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/color_blue</item>
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/back_primary</item>
         <item name="colorPrimaryVariant">@color/color_gray</item>
         <item name="colorOnPrimary">@color/label_primary</item>
-        <item name="colorSecondary">@color/label_primary</item>
-        <item name="colorSecondaryVariant">@color/color_gray</item>
-        <item name="colorOnSecondary">@color/color_gray</item>
+
+        <item name="colorSecondary">@color/back_secondary</item>
+        <item name="colorSecondaryVariant">@color/color_blue</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <item name="colorTertiary">@color/color_gray</item>
+
+        <item name="android:statusBarColor">@color/back_primary</item>
         <item name="statusBarBackground">@color/back_secondary</item>
         <item name="android:textViewStyle">@color/label_primary</item>
     </style>

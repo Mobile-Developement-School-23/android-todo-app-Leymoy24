@@ -16,8 +16,10 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.transition.TransitionInflater
 import com.example.todoapp.R
 import com.example.todoapp.data.database.Task
 import com.example.todoapp.databinding.FragmentTaskBinding
@@ -80,7 +82,7 @@ class TaskFragment : Fragment() {
         }
 
         binding.imageButtonClose.setOnClickListener {
-            findNavController().navigate(R.id.action_taskFragment_to_fragmentToDo)
+            findNavController().popBackStack(R.id.fragmentToDo, false)
         }
 
         deleteViewChanges()
@@ -90,7 +92,7 @@ class TaskFragment : Fragment() {
             if (taskText.isNotEmpty() && args.currentTask != null) {
                 mTaskViewModel.delete(args.currentTask!!)
             }
-            findNavController().navigate(R.id.action_taskFragment_to_fragmentToDo)
+            findNavController().popBackStack(R.id.fragmentToDo, false)
         }
 
 
@@ -133,7 +135,7 @@ class TaskFragment : Fragment() {
             val task = Task(0, text, false, importance, deadline)
             mTaskViewModel.add(task)
             Toast.makeText(requireContext(), "Заметка добавлена!", Toast.LENGTH_LONG).show()
-            findNavController().navigate(R.id.action_taskFragment_to_fragmentToDo)
+            findNavController().popBackStack(R.id.fragmentToDo, false)
         } else {
             Toast.makeText(requireContext(), "Пожалуйста, введите текст заметки.", Toast.LENGTH_LONG).show()
         }
@@ -155,7 +157,7 @@ class TaskFragment : Fragment() {
             // обновление базы данных
             mTaskViewModel.update(updatedTask)
             Toast.makeText(requireContext(), "Заметка обновлена!", Toast.LENGTH_LONG).show()
-            findNavController().navigate(R.id.action_taskFragment_to_fragmentToDo)
+            findNavController().popBackStack(R.id.fragmentToDo, false)
         } else {
             Toast.makeText(requireContext(), "Пожалуйста, введите текст заметки.", Toast.LENGTH_LONG).show()
         }

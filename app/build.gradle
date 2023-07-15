@@ -36,7 +36,11 @@ android {
     android {
         buildFeatures {
             viewBinding = true
+//            compose true
         }
+//        composeOptions {
+//            kotlinCompilerExtensionVersion = "1.4.8"
+//        }
     }
 }
 
@@ -79,6 +83,4 @@ dependencies {
     implementation "com.squareup.okhttp3:okhttp:4.11.0"
     implementation "com.squareup.okhttp3:logging-interceptor:4.11.0"
     implementation "com.squareup.retrofit2:converter-gson:2.9.0"
-
-
 }
