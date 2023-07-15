@@ -12,25 +12,31 @@
         tools:layout="@layout/fragment_to_do">
         <action
             android:id="@+id/action_fragmentToDo_to_taskFragment"
-            app:destination="@id/taskFragment">
-            <argument
-                android:name="taskId"
-                app:argType="string"
-                android:defaultValue="defaultTaskId" />
+            app:destination="@id/taskFragment"
+            app:enterAnim="@animator/anim_enter"
+            app:exitAnim="@animator/anim_out"
+            app:popEnterAnim="@animator/anim_enter"
+            app:popExitAnim="@animator/anim_out">
         </action>
     </fragment>
+
     <fragment
         android:id="@+id/taskFragment"
         android:name="com.example.todoapp.ui.fragments.TaskFragment"
         android:label="fragment_task"
         tools:layout="@layout/fragment_task">
         <argument
-            android:name="taskId"
-            app:argType="string"
-            android:defaultValue="defaultTaskId" />
+            android:name="currentTask"
+            android:defaultValue="@null"
+            app:argType="com.example.todoapp.data.database.Task"
+            app:nullable="true" />
         <action
             android:id="@+id/action_taskFragment_to_fragmentToDo"
             app:destination="@id/fragmentToDo"
+            app:enterAnim="@animator/anim_enter"
+            app:exitAnim="@animator/anim_out"
+            app:popEnterAnim="@animator/anim_enter"
+            app:popExitAnim="@animator/anim_out"
             app:popUpTo="@id/fragmentToDo" />
     </fragment>
 

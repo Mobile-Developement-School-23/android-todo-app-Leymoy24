@@ -1,8 +1,14 @@
 package com.example.todoapp.ui.fragments
 
+import android.annotation.SuppressLint
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.SpannableString
+import android.text.TextUtils
 import android.text.TextWatcher
 import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
@@ -10,14 +16,22 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import android.widget.Toast
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
+import androidx.transition.TransitionInflater
 import com.example.todoapp.R
-import com.example.todoapp.data.models.TodoItem
+import com.example.todoapp.data.database.Task
 import com.example.todoapp.databinding.FragmentTaskBinding
-import com.example.todoapp.ui.viewmodels.TodoViewModel
+import com.example.todoapp.ui.viewmodels.TaskViewModel
+import com.example.todoapp.utils.MyNotificationReceiver
 import com.google.android.material.datepicker.MaterialDatePicker
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -26,10 +40,17 @@ import java.util.TimeZone
 
 class TaskFragment : Fragment() {
 
+    lateinit var mContext: Context
+    private lateinit var mTaskViewModel: TaskViewModel
+
     private var _binding: FragmentTaskBinding? = null
     private val binding get() = _binding!!
-    private lateinit var taskViewModel: TodoViewModel
-    private lateinit var taskId: String
+    private val args by navArgs<TaskFragmentArgs>()
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        mContext = context
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,99 +61,80 @@ class TaskFragment : Fragment() {
         return binding.root
     }
 
+    @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        taskViewModel = ViewModelProvider(requireActivity()).get(TodoViewModel::class.java)
-
-
-        taskId = TaskFragmentArgs.fromBundle(requireArguments()).taskId
-
-        if (taskId.isNotEmpty()) {
-            val todoItem = taskViewModel.getTaskById(taskId)
-            todoItem?.let {
-                binding.editTextEnterTask.setText(todoItem.taskText)
-                binding.textViewImportanceText.text = todoItem.importance
-                if (todoItem.importance == "!! Высокий") {
-                    binding.textViewImportanceText.setTextColor(
-                        ContextCompat.getColor(
-                            requireContext(),
-                            R.color.color_red
-                        )
+        if (args.currentTask != null) {
+            binding.editTextEnterTask.setText(args.currentTask!!.taskText)
+            binding.textViewImportanceText.text = args.currentTask!!.importance
+            binding.textViewDate.text = args.currentTask!!.deadline
+            if (args.currentTask!!.importance == "!! Высокий") {
+                binding.textViewImportanceText.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.color_red
                     )
-                }
-                binding.textViewDate.text = taskViewModel.getTaskById(taskId)!!.deadline
-                if (binding.textViewDate.text != "") {
-                    binding.switchCompat.isChecked = true
-                }
-            }
-        }
-
-        binding.textViewDownload.setOnClickListener {
-            val taskText = binding.editTextEnterTask.text.toString().trim()
-            val taskImportance = binding.textViewImportanceText.text.toString().trim()
-            val taskDeadline = binding.textViewDate.text.toString().trim()
-
-            if (taskText.isNotEmpty()) {
-                if (taskId.isNotEmpty() && taskId != "defaultTaskId") {
-                    taskViewModel.updateTask(taskId, taskText)
-                } else {
-                    taskViewModel.addTask(taskText, taskImportance, taskDeadline)
-                }
-            }
-
-            if (taskId != "defaultTaskId" && binding.textViewDate.text != taskViewModel.getTaskById(
-                    taskId
-                )?.deadline
-            ) {
-                taskViewModel.updateDeadline(taskId, binding.textViewDate.text.toString())
-            }
-
-            if (taskId != "defaultTaskId" && binding.textViewDate.text != taskViewModel.getTaskById(
-                    taskId
-                )?.deadline
-            ) {
-                taskViewModel.updateTaskImportance(
-                    taskId,
-                    binding.textViewImportanceText.text.toString()
                 )
             }
+            if (binding.textViewDate.text != "") { binding.switchCompat.isChecked = true }
+        }
 
-            findNavController().navigate(R.id.action_taskFragment_to_fragmentToDo)
+        mTaskViewModel = ViewModelProvider(this).get(TaskViewModel::class.java)
+
+        binding.textViewDownload.setOnClickListener {
+            if (args.currentTask == null){
+                insertDataToDatabase()
+            } else {
+                updateTask()
+            }
         }
 
         binding.imageButtonClose.setOnClickListener {
-            findNavController().navigate(R.id.action_taskFragment_to_fragmentToDo)
+            findNavController().popBackStack(R.id.fragmentToDo, false)
         }
 
         deleteViewChanges()
 
         binding.DeleteTextView.setOnClickListener {
             val taskText = binding.editTextEnterTask.text.toString().trim()
-            if (taskText.isNotEmpty() && taskId != "defaultTaskId" && taskId.isNotEmpty()) {
-                taskViewModel.deleteTask(taskId)
+            if (taskText.isNotEmpty() && args.currentTask != null) {
+                mTaskViewModel.delete(args.currentTask!!)
             }
-            findNavController().navigate(R.id.action_taskFragment_to_fragmentToDo)
+            findNavController().popBackStack(R.id.fragmentToDo, false)
         }
 
 
         val builder: MaterialDatePicker.Builder<*> = MaterialDatePicker.Builder.datePicker()
-        binding.switchCompat.setOnCheckedChangeListener { _, _ ->
-            builder.setTitleText("Выберите дату")
-            val picker: MaterialDatePicker<*> = builder.build()
-            fragmentManager?.let { manager ->
-                picker.show(manager, picker.toString())
-            }
+        builder.setTitleText("Выберите дату")
+        val picker: MaterialDatePicker<*> = builder.build()
 
-            picker.addOnPositiveButtonClickListener {
-                val utc = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
-                utc.timeInMillis = it as Long
-                val format = SimpleDateFormat("d MMMM yyyy")
-                val formatted: String = format.format(utc.time)
-                binding.textViewDate.text = formatted
+        binding.switchCompat.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                fragmentManager?.let { manager ->
+                    picker.show(manager, picker.toString())
+                }
+
+                picker.addOnPositiveButtonClickListener { selectedDate ->
+                    val selectedDateTimeInMillis = selectedDate as Long
+
+                    // Установка уведомления
+                    val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                    val notificationIntent = Intent(context, MyNotificationReceiver::class.java)
+                    notificationIntent.putExtra("notification_message", args.currentTask?.taskText)
+                    val pendingIntent = PendingIntent.getBroadcast(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                    alarmManager.set(AlarmManager.RTC_WAKEUP, selectedDateTimeInMillis, pendingIntent)
+
+                    val utc = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+                    utc.timeInMillis = selectedDateTimeInMillis
+                    val format = SimpleDateFormat("d MMMM yyyy")
+                    val formatted: String = format.format(utc.time)
+                    binding.textViewDate.text = formatted
+                }
+            } else {
+                binding.textViewDate.text = ""
             }
         }
-
 
 
         binding.linearLayoutImportance.setOnClickListener {
@@ -141,14 +143,50 @@ class TaskFragment : Fragment() {
 
     }
 
+    private fun insertDataToDatabase() {
+        val text = binding.editTextEnterTask.text.toString()
+        val importance = binding.textViewImportanceText.text.toString()
+        val deadline = binding.textViewDate.text.toString()
+
+        if (inputCheck(text)) {
+            // создаем новый таск
+            val task = Task(0, text, false, importance, deadline)
+            mTaskViewModel.add(task)
+            Toast.makeText(requireContext(), "Заметка добавлена!", Toast.LENGTH_LONG).show()
+            findNavController().popBackStack(R.id.fragmentToDo, false)
+        } else {
+            Toast.makeText(requireContext(), "Пожалуйста, введите текст заметки.", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun inputCheck(text: String): Boolean {
+        return !TextUtils.isEmpty(text)
+    }
+
+    private fun updateTask() {
+
+        val taskText = binding.editTextEnterTask.text.toString()
+        val taskImportance = binding.textViewImportanceText.text.toString()
+        val taskDeadline = binding.textViewDate.text.toString()
+
+        if (inputCheck(taskText)) {
+            // создание обновленного таска
+            val updatedTask = Task(args.currentTask!!.id, taskText, args.currentTask!!.isCompleted, taskImportance, taskDeadline)
+            // обновление базы данных
+            mTaskViewModel.update(updatedTask)
+            Toast.makeText(requireContext(), "Заметка обновлена!", Toast.LENGTH_LONG).show()
+            findNavController().popBackStack(R.id.fragmentToDo, false)
+        } else {
+            Toast.makeText(requireContext(), "Пожалуйста, введите текст заметки.", Toast.LENGTH_LONG).show()
+        }
+    }
+
     private fun showImportanceList(view: View) {
         val popupMenu = PopupMenu(context, view)
         popupMenu.menuInflater.inflate(R.menu.popupmenu, popupMenu.menu)
 
-        val todoItem: TodoItem? = taskViewModel.getTaskById(taskId)
-
         val highImportance = popupMenu.menu.getItem(2)
-        val spannable: SpannableString = SpannableString(highImportance.title.toString())
+        val spannable = SpannableString(highImportance.title.toString())
         spannable.setSpan(
             ForegroundColorSpan(
                 ContextCompat.getColor(
@@ -168,10 +206,6 @@ class TaskFragment : Fragment() {
                         R.color.color_red
                     )
                 )
-                todoItem?.let {
-                    val importance = getString(R.string.high)
-                    taskViewModel.updateTaskImportance(it.taskId, importance)
-                }
             } else if (menuItem.itemId == R.id.low) {
                 binding.textViewImportanceText.setTextColor(
                     ContextCompat.getColor(
@@ -179,10 +213,6 @@ class TaskFragment : Fragment() {
                         R.color.label_disable
                     )
                 )
-                todoItem?.let {
-                    val importance = getString(R.string.low)
-                    taskViewModel.updateTaskImportance(it.taskId, importance)
-                }
             } else {
                 binding.textViewImportanceText.setTextColor(
                     ContextCompat.getColor(
@@ -190,10 +220,6 @@ class TaskFragment : Fragment() {
                         R.color.label_disable
                     )
                 )
-                todoItem?.let {
-                    val importance = getString(R.string.no)
-                    taskViewModel.updateTaskImportance(it.taskId, importance)
-                }
             }
             true
         })
@@ -220,9 +246,7 @@ class TaskFragment : Fragment() {
 
         // Следим за изменениями текста в EditText
         editText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                // метод не используется
-            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if (s.isNullOrEmpty()) {
@@ -237,9 +261,7 @@ class TaskFragment : Fragment() {
                 textView.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
             }
 
-            override fun afterTextChanged(s: Editable?) {
-                // метод не используется
-            }
+            override fun afterTextChanged(s: Editable?) {}
         })
     }
 
@@ -247,4 +269,6 @@ class TaskFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
+    private fun <T> views(block: FragmentTaskBinding.() -> T): T? = _binding?.block()
 }

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Title" parent="TextAppearance.MaterialComponents.Headline4">
+        <item name="fontFamily">@font/roboto</item>
+        <item name="android:textSize">30sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">?attr/colorOnPrimary</item>
+    </style>
+
+    <style name="ButtonLoginText" parent="TextAppearance.MaterialComponents.Headline4">
+        <item name="fontFamily">@font/roboto</item>
+        <item name="textAllCaps">true</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">?attr/colorOnPrimary</item>
+    </style>
+
+    <style name="Body">
+        <item name="fontFamily">@font/roboto</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">?attr/colorOnPrimary</item>
+    </style>
+
+    <style name="BodySubtitle">
+        <item name="android:textColor">@color/label_disable</item>
+        <item name="fontFamily">@font/roboto</item>
+        <item name="background">@null</item>
+    </style>
+
+    <style name="CollapsingToolBar" parent="TextAppearance.MaterialComponents.Headline4">
+        <item name="textAllCaps">true</item>
+        <item name="fontFamily">@font/roboto</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">?attr/colorOnPrimary</item>
+    </style>
+
+    <style name="ToolbarText">
+        <item name="fontFamily">@font/roboto</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">?attr/colorTertiary</item>
+    </style>
+
+    <style name="NestedScrollViewStyle">
+        <item name="background">?attr/colorPrimary</item>
+        <item name="backgroundTint">?attr/colorPrimary</item>
+    </style>
+
+    <style name="CardViewStyle">
+        <item name="cardBackgroundColor">?attr/colorSecondary</item>
+        <item name="cardCornerRadius">7dp</item>
+        <item name="elevation">2dp</item>
+    </style>
+
+    <style name="FloatingActionButtonStyle">
+        <item name="android:backgroundTint">?attr/colorSecondaryVariant</item>
+        <item name="borderWidth">0dp</item>
+        <item name="tint">@color/color_white</item>
+    </style>
+
+    <style name="TextViewBlue" parent="TextAppearance.MaterialComponents.Headline4">
+        <item name="android:textColor">?attr/colorSecondaryVariant</item>
+        <item name="background">?attr/selectableItemBackground</item>
+        <item name="android:textSize">16sp</item>
+        <item name="fontFamily">@font/roboto</item>
+    </style>
+    
+    <style name="EditText">
+        <item name="fontFamily">@font/roboto</item>
+        <item name="background">@null</item>
+        <item name="android:backgroundTint">?attr/colorSecondary</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColorHint">?attr/colorTertiary</item>
+    </style>
+</resources>
