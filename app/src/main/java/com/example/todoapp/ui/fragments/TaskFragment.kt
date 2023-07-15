@@ -1,6 +1,10 @@
 package com.example.todoapp.ui.fragments
 
+import android.annotation.SuppressLint
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.SpannableString
@@ -13,7 +17,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import android.widget.Toast
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavOptions
@@ -24,6 +31,7 @@ import com.example.todoapp.R
 import com.example.todoapp.data.database.Task
 import com.example.todoapp.databinding.FragmentTaskBinding
 import com.example.todoapp.ui.viewmodels.TaskViewModel
+import com.example.todoapp.utils.MyNotificationReceiver
 import com.google.android.material.datepicker.MaterialDatePicker
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -53,6 +61,7 @@ class TaskFragment : Fragment() {
         return binding.root
     }
 
+    @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -106,9 +115,18 @@ class TaskFragment : Fragment() {
                     picker.show(manager, picker.toString())
                 }
 
-                picker.addOnPositiveButtonClickListener {
+                picker.addOnPositiveButtonClickListener { selectedDate ->
+                    val selectedDateTimeInMillis = selectedDate as Long
+
+                    // Установка уведомления
+                    val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                    val notificationIntent = Intent(context, MyNotificationReceiver::class.java)
+                    notificationIntent.putExtra("notification_message", args.currentTask?.taskText)
+                    val pendingIntent = PendingIntent.getBroadcast(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                    alarmManager.set(AlarmManager.RTC_WAKEUP, selectedDateTimeInMillis, pendingIntent)
+
                     val utc = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
-                    utc.timeInMillis = it as Long
+                    utc.timeInMillis = selectedDateTimeInMillis
                     val format = SimpleDateFormat("d MMMM yyyy")
                     val formatted: String = format.format(utc.time)
                     binding.textViewDate.text = formatted
